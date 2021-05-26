@@ -19,11 +19,11 @@ RUN git clone --recursive https://github.com/microsoft/onnxruntime.git /code && 
 # Build onnxruntime
 RUN cd /code && /bin/bash ./build.sh --skip_submodule_sync --use_openmp --config Release --build_wheel --update --build --parallel --cmake_extra_defines ONNXRUNTIME_VERSION=$(cat ./VERSION_NUMBER)
 
-# Install python protocol
-RUN apt-get install -y --no-install-recommends libstdc++6 libgomp1 ca-certificates python3-setuptools python3-wheel python3-pip unattended-upgrades && unattended-upgrade && python3 -m pip install /code/build/Linux/Release/dist/*.whl
-
+# Copy prebuild
 FROM ubuntu:18.04
 COPY --from=0 /code/build /code/build
+
+# Install python protocol
 RUN apt-get update && apt-get install -y --no-install-recommends libstdc++6 libgomp1 ca-certificates python3-setuptools python3-wheel python3-pip unattended-upgrades && unattended-upgrade && python3 -m pip install /code/build/Linux/Release/dist/*.whl
 
 RUN rm -rf /var/lib/apt/lists/*
